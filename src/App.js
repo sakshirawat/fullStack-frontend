@@ -6,6 +6,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 
 // Import page components for routing
+import NotFound from './pages/pageNotFound'
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 import Home from './pages/Home';
@@ -34,6 +35,8 @@ function App() {
 
         {/* Public route: Sign Up page */}
         <Route path="/signup" element={<SignUp />} />
+        {/* page not found */}
+        <Route path="*" element={<NotFound/>} />
 
         {/* Protected route: Dashboard layout with nested routes */}
         <Route
