@@ -111,7 +111,7 @@ const BookAppointment = () => {
       if (res.ok) {
         alert("Appointment booked successfully.");
         dispatch({ type: 'RESET_FORM' }); // Reset form state
-        navigate('/myAppointments'); // Redirect to appointments page
+        navigate('/layout/myAppointments'); // Redirect to appointments page
       } else {
         alert(data.message || 'Failed to book appointment');
       }
