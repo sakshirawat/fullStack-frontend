@@ -168,22 +168,31 @@ const MyAppointments = () => {
                 </p>
 
                 {/* Join button: disabled if appointment is in the past */}
-                <button
-                  className={`px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 ${
-                    isPast
-                      ? 'bg-gray-400 cursor-not-allowed'
-                      : 'bg-blue-600 hover:bg-blue-700 text-white'
-                  }`}
-                  onClick={() =>
-                    handleJoin(
-                      time || appointmentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                      doctorId
-                    )
-                  }
-                  disabled={isPast} // Disable button if appointment is past
-                >
-                  Join
-                </button>
+               <button
+  className={`px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 bg-blue-600 hover:bg-blue-700 text-white`}
+  onClick={() => {
+    // Get today's date at midnight
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Appointment date at midnight for comparison
+    const appointmentMidnight = new Date(appointmentDate);
+    appointmentMidnight.setHours(0, 0, 0, 0);
+
+    if (appointmentMidnight.getTime() !== today.getTime()) {
+      alert('You can only join appointments scheduled for today.');
+      return; // Do not proceed to join
+    }
+
+    // Date matches today, proceed to join
+    handleJoin(
+      time || appointmentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      doctorId
+    );
+  }}
+>
+  Join
+</button>
               </div>
             </div>
           );
