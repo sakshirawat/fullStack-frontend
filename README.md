@@ -1,70 +1,46 @@
-# Getting Started with Create React App
+Healthcare Appointment Facility - Frontend
+Overview
+This is the Frontend part of the Healthcare Appointment Facility application. It allows users to:
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+View available doctors and services
 
-## Available Scripts
+Browse available appointment slots by doctor
 
-In the project directory, you can run:
+Book appointments with doctors on specific dates and times
 
-### `npm start`
+Upload medical reports (optional) during booking
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+View and manage their existing appointments after login
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+The frontend is built using React.js and communicates with the backend APIs to perform all appointment-related operations.
 
-### `npm test`
+Features
+Doctor Listing: View all doctors with their departments and details.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Available Slots: Fetch and display available time slots for each doctor.
 
-### `npm run build`
+Appointment Booking: Book an appointment by selecting date, time, doctor, and adding optional comments and reports.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+User Authentication: Secure login system to identify users and show their appointments.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+User Appointments: View past and upcoming appointments, including appointment details.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Input Validation: Validate dates and prevent booking on invalid dates (e.g., past dates, Sundays).
 
-### `npm run eject`
+Report Upload: Optionally upload reports while booking appointments.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Responsive UI: Works well on both desktop and mobile devices.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Technologies Used
+React.js
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+Redux 
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+React Router
 
-## Learn More
+Axios / Fetch API for backend communication
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Tailwind CSS / Bootstrap / CSS Modules (depending on your styling)
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Form validation libraries (e.g., Formik, Yup) - if used
 
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
