@@ -102,17 +102,27 @@ const MyAppointments = () => {
       {/* Appointment Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {filteredAppointments.map(({ _id, doctorId, doctorName, doctorDepartment, dateTime, time, date }) => {
-          const appointmentDate = new Date(dateTime || date);
+          // Appointment date & time
+          const appointmentDateTime = new Date(dateTime || date);
+          const now = new Date();
 
-          // Get today at midnight
+          // Extract only date parts for comparison (midnight time)
+          const appointmentDateOnly = new Date(appointmentDateTime);
+          appointmentDateOnly.setHours(0, 0, 0, 0);
+
           const today = new Date();
           today.setHours(0, 0, 0, 0);
 
-          // Appointment date at midnight
-          const appointmentMidnight = new Date(appointmentDate);
-          appointmentMidnight.setHours(0, 0, 0, 0);
+          // Check if appointment date is past, future, or today
+          const isPastDate = appointmentDateOnly < today;
+          const isFutureDate = appointmentDateOnly > today;
+          const isToday = appointmentDateOnly.getTime() === today.getTime();
 
-          const isToday = appointmentMidnight.getTime() === today.getTime();
+          // For today, check if appointment time is in the future (can join only if time is upcoming)
+          const isFutureTimeToday = isToday && appointmentDateTime > now;
+
+          // Enable Join button only if appointment is today and time is still upcoming
+          const canJoin = isFutureTimeToday;
 
           return (
             <div key={_id} className="bg-white shadow-md rounded-lg overflow-hidden border border-gray-200">
@@ -130,27 +140,39 @@ const MyAppointments = () => {
                 </p>
                 <p className="text-gray-600">
                   <span className="font-medium">Date:</span>{' '}
-                  {appointmentDate.toLocaleDateString('en-GB')}
+                  {appointmentDateTime.toLocaleDateString('en-GB')}
                 </p>
                 <p className="text-gray-600">
                   <span className="font-medium">Time:</span>{' '}
-                  {time || appointmentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  {time || appointmentDateTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </p>
 
                 {/* Join Button */}
                 <button
                   className={`mt-4 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 ${
-                    isToday ? 'bg-blue-600 hover:bg-blue-700 text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                    canJoin
+                      ? 'bg-blue-600 hover:bg-blue-700 text-white cursor-pointer'
+                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                   }`}
-                  disabled={!isToday}
+                  disabled={!canJoin}
                   onClick={() => {
-                    if (!isToday) {
-                      alert('You can only join appointments scheduled for today.');
+                    if (isPastDate) {
+                      alert('This appointment date has already passed. You cannot join.');
+                      return;
+                    }
+
+                    if (isFutureDate) {
+                      alert("You can't join this appointment right now. It is scheduled for a future date.");
+                      return;
+                    }
+
+                    if (!isFutureTimeToday) {
+                      alert('The appointment time has already passed for today.');
                       return;
                     }
 
                     handleJoin(
-                      time || appointmentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                      time || appointmentDateTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                       doctorId
                     );
                   }}
