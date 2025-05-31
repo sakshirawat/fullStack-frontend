@@ -171,14 +171,16 @@ const BookAppointment = () => {
           <div>
             <label htmlFor="date" className="block mb-1 font-medium">Select Date</label>
             <input
-              id="date"
-              type="date"
-              value={selectedDate}
-              min={new Date().toISOString().split('T')[0]} // Prevent past dates
-              onChange={(e) => dispatch({ type: 'SET_DATE', payload: e.target.value })}
-              className="w-full p-2 border rounded"
-              required
-            />
+  id="date"
+  type="date"
+  value={selectedDate}
+  min={new Date().toISOString().split('T')[0]} // today
+  max={new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]} // +30 days
+  onChange={(e) => dispatch({ type: 'SET_DATE', payload: e.target.value })}
+  className="w-full p-2 border rounded"
+  required
+/>
+
           </div>
         )}
 

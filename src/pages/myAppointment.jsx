@@ -1,23 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import image from '../assets/image1.jpg'; // Placeholder image
+import image from '../assets/image1.jpg';  // Placeholder image for doctors or appointment cards
 
 const MyAppointments = () => {
-  const [appointments, setAppointments] = useState([]);           // All appointments
-  const [selectedYear, setSelectedYear] = useState('all');        // Year filter
-  const token = localStorage.getItem('token');                    // Auth token
+  const [appointments, setAppointments] = useState([]);
+  const [selectedYear, setSelectedYear] = useState('all');
+  const token = localStorage.getItem('token');
 
-  // Fetch appointments on mount
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
         const res = await fetch(`${process.env.REACT_APP_BASE_URL}/appoint/myAppointments`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
-
         const data = await res.json();
-
         if (res.ok) {
           setAppointments(data.appointments);
         } else {
@@ -27,13 +22,9 @@ const MyAppointments = () => {
         console.error('Network error fetching appointments:', err);
       }
     };
-
-    if (token) {
-      fetchAppointments();
-    }
+    fetchAppointments();
   }, [token]);
 
-  // Extract unique years from appointments
   const years = Array.from(
     new Set(
       appointments
@@ -43,7 +34,6 @@ const MyAppointments = () => {
     )
   ).sort((a, b) => a - b);
 
-  // Filter appointments by year
   const filteredAppointments =
     selectedYear === 'all'
       ? appointments
@@ -52,7 +42,6 @@ const MyAppointments = () => {
           return !isNaN(dateObj) && dateObj.getFullYear().toString() === selectedYear;
         });
 
-  // Handle "Join" button click
   const handleJoin = async (time, doctorId) => {
     try {
       const res = await fetch(`${process.env.REACT_APP_BASE_URL}/appoint/joinAppointment`, {
@@ -63,9 +52,7 @@ const MyAppointments = () => {
         },
         body: JSON.stringify({ time, doctorId }),
       });
-
       const data = await res.json();
-
       if (res.ok) {
         alert('Successfully joined the appointment!');
       } else {
@@ -79,7 +66,6 @@ const MyAppointments = () => {
 
   return (
     <div className="max-w-6xl mx-auto p-4 sm:p-6 md:p-8">
-      {/* Year Filter Dropdown */}
       <div className="mb-6">
         <label htmlFor="yearFilter" className="block mb-2 font-semibold text-gray-700">
           Sort by Year
@@ -99,34 +85,25 @@ const MyAppointments = () => {
         </select>
       </div>
 
-      {/* Appointment Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {filteredAppointments.map(({ _id, doctorId, doctorName, doctorDepartment, dateTime, time, date }) => {
-          // Appointment date & time
-          const appointmentDateTime = new Date(dateTime || date);
-          const now = new Date();
+          const appointmentDate = dateTime ? new Date(dateTime) : new Date(date);
 
-          // Extract only date parts for comparison (midnight time)
-          const appointmentDateOnly = new Date(appointmentDateTime);
-          appointmentDateOnly.setHours(0, 0, 0, 0);
-
+          // Normalize dates to midnight for date-only comparison
           const today = new Date();
           today.setHours(0, 0, 0, 0);
 
-          // Check if appointment date is past, future, or today
-          const isPastDate = appointmentDateOnly < today;
-          const isFutureDate = appointmentDateOnly > today;
+          const appointmentDateOnly = new Date(appointmentDate);
+          appointmentDateOnly.setHours(0, 0, 0, 0);
+
+          const isPast = appointmentDateOnly < today;
           const isToday = appointmentDateOnly.getTime() === today.getTime();
 
-          // For today, check if appointment time is in the future (can join only if time is upcoming)
-          const isFutureTimeToday = isToday && appointmentDateTime > now;
-
-          // Enable Join button only if appointment is today and time is still upcoming
-          const canJoin = isFutureTimeToday;
-
           return (
-            <div key={_id} className="bg-white shadow-md rounded-lg overflow-hidden border border-gray-200">
-              {/* Doctor Image */}
+            <div
+              key={_id}
+              className="bg-white shadow-md rounded-lg overflow-hidden border border-gray-200"
+            >
               <img
                 src={image}
                 alt={`Dr. ${doctorName}`}
@@ -140,39 +117,27 @@ const MyAppointments = () => {
                 </p>
                 <p className="text-gray-600">
                   <span className="font-medium">Date:</span>{' '}
-                  {appointmentDateTime.toLocaleDateString('en-GB')}
+                  {appointmentDate.toLocaleDateString('en-GB')}
                 </p>
                 <p className="text-gray-600">
                   <span className="font-medium">Time:</span>{' '}
-                  {time || appointmentDateTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  {time || appointmentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </p>
 
-                {/* Join Button */}
                 <button
-                  className={`mt-4 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 ${
-                    canJoin
-                      ? 'bg-blue-600 hover:bg-blue-700 text-white cursor-pointer'
-                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  className={`px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 ${
+                    isPast
+                      ? 'bg-gray-400 cursor-not-allowed text-gray-600'
+                      : 'bg-blue-600 hover:bg-blue-700 text-white cursor-pointer'
                   }`}
-                  disabled={!canJoin}
+                  disabled={isPast}
                   onClick={() => {
-                    if (isPastDate) {
-                      alert('This appointment date has already passed. You cannot join.');
+                    if (!isToday && !isPast) {
+                      alert("You can't join this appointment before its scheduled date.");
                       return;
                     }
-
-                    if (isFutureDate) {
-                      alert("You can't join this appointment right now. It is scheduled for a future date.");
-                      return;
-                    }
-
-                    if (!isFutureTimeToday) {
-                      alert('The appointment time has already passed for today.');
-                      return;
-                    }
-
                     handleJoin(
-                      time || appointmentDateTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                      time || appointmentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                       doctorId
                     );
                   }}
